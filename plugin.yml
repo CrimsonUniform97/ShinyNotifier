@@ -1,0 +1,40 @@
+name: ShinyNotifier
+version: 0.0.1
+description: Helps server owners track when players capture shiny and legendary pokemon
+main: net.pixellife.shinynotifier.ShinyNotifier
+commands: 
+    gscheck:
+        description: Check the captured shinies/legendaries of a player
+        usage: /<command> [player]
+        permission: ShinyNotifier.gscheck 
+        permission-message: You don't have <permission>, which is required for this command
+    gstop:
+        description: Check the top N players in M days by how many shinies/legendaries they've captured
+        usage: /<command> [top] [days]
+        permission: ShinyNotifier.gstop
+        permission-message: You don't have <permission>, which is required for this command
+    gspurge:
+        description: Purge the record of a given player
+        usage: /<command> [player]
+        permission: ShinyNotifier.gspurge 
+        permission-message: You don't have <permission>, which is required for this command
+permissions:
+    ShinyNotifier.*:
+        description: Gives access to all Shiny Notifier commands and notifications
+        children:
+            ShinyNotifier.receive: true
+            ShinyNotifier.gscheck: true
+            ShinyNotifier.gstop: true
+            ShinyNotifier.gspurge: true
+    ShinyNotifier.receive:
+        description: Receive notifications from the mod on shiny/legendary capture
+        default: op
+    ShinyNotifier.gscheck:
+        description: Allows you to check the captured shinies/legendaries of a player
+        default: op
+    ShinyNotifier.gstop:
+        description: Allows you to check the top N players in M days by how many shinies/legendaries they've captured
+        default: op
+    ShinyNotifier.gspurge:
+        description: Allows you to purge the record of a given player
+        default: op

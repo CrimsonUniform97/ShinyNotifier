@@ -1,0 +1,17 @@
+[
+{
+  "modid": "shinynotifier",
+  "name": "Shiny Notifier",
+  "description": "Know when shinies and legendaries are captured!!",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "forgeversion": "${fversion}",
+  "url": "pixellife.enjin.com",
+  "updateUrl": "http://www.pixellife.enjin.com",
+  "authorList": ["Bryan \"Beege\" Berry"],
+  "credits": "Pixelmon and Pixellife Development Team",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
