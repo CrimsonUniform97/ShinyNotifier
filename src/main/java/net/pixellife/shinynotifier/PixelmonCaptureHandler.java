@@ -23,9 +23,6 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class PixelmonCaptureHandler {
 	
-	private final String SHINY = "SHINY";
-	private final String UNDISCOVERED = "UNDISCOVERED";
-	
 	@SubscribeEvent
     public void onPokemonCapture(PixelmonCaptureEvent event) throws SQLException {
 		UUID playerId = event.player.getUniqueID();
@@ -34,12 +31,12 @@ public class PixelmonCaptureHandler {
 		String type = null;
 		
     	if (event.capturedPixelmon.getIsShiny()) {
-    		type = SHINY;
-    		System.out.println("Captured Shiny!");
+    		type = ShinyNotifier.SHINY;
+    		//System.out.println("Captured Shiny!");
     		
     	} else if (event.capturedPixelmon.group == EnumEggGroup.Undiscovered ) {
-    		type = UNDISCOVERED;
-    		System.out.println("Captured Undiscovered!");
+    		type = ShinyNotifier.UNDISCOVERED;
+    		//System.out.println("Captured Undiscovered!");
     		
     	} else {
     		return;
@@ -53,10 +50,12 @@ public class PixelmonCaptureHandler {
 		
 		ChatComponentText notificationText;
 		
-		if ( type == SHINY ) {
+		if ( type == ShinyNotifier.SHINY ) {
 			notificationText = new ChatComponentText(playerName + " just caught a shiny " + pokeName + "!");
-		} else if ( type == UNDISCOVERED ) {
+			System.out.println(playerName + " just caught a shiny " + pokeName + "!");
+		} else if ( type == ShinyNotifier.UNDISCOVERED ) {
 			notificationText = new ChatComponentText(playerName + " just caught a " + pokeName + "!");
+			System.out.println(playerName + " just caught a " + pokeName + "!");
 		} else {
 			return;
 		}
@@ -77,13 +76,14 @@ public class PixelmonCaptureHandler {
 		insertPlayerStatement.setString(2, playerName);
 		insertPlayerStatement.execute();
 		
-		Calendar cal = Calendar.getInstance(); 
-		Timestamp timestamp = new Timestamp(cal.getTimeInMillis());
+		Long timeInMS = System.currentTimeMillis(); 
+		Timestamp timestamp = new Timestamp(timeInMS);
 		
 		PreparedStatement insertCaptureStatement = ShinyNotifier.instance.captureStatement;
 		insertCaptureStatement.setTimestamp(1, timestamp);
 		insertCaptureStatement.setObject(2, playerId);
 		insertCaptureStatement.setString(3, pokeName);
 		insertCaptureStatement.setString(4, type);
+		insertCaptureStatement.execute();
 	}
 }
