@@ -57,12 +57,9 @@ public final class DatabaseUtil {
 			if (databaseFile.exists()) {
 				databaseFile.delete();
 			}
-			File updateDatabaseDir = new File(ShinyNotifier.modDirectory
-					+ "/customdatabase/");
-			if ((updateDatabaseDir.exists())
-					&& (new File(updateDatabaseDir, "ShinyNotifier.h2.db").exists()))
-				shinyDatabasePath = ShinyNotifier.modDirectory + "/customdatabase/";
-			else {
+			
+			if (!(new File(shinyDatabasePath).exists())
+					|| !(new File(shinyDatabasePath, "ShinyNotifier.h2.db").exists())) {
 				copyDatabaseFromJar();
 			}
 			if (!(new File(pixelmonDatabasePath + "h2-1.3.173.jar").exists()))
