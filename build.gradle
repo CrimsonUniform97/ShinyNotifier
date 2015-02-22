@@ -73,8 +73,8 @@ configurations {
 }
 
 dependencies {
-    //compile files('libs/compile/Pixelmon-deobf.jar')
-    //compile files('libs/runtime/vlcj-3.0.1.jar')
+    compile files('lib/bukkit-1.6.4-R2.0.jar')
+    compile files('lib/Pixelmon-1.7.10-3.3.8-deob.jar')
     //runtimeOnly files('libs/runtime/jna-3.5.2.jar')
     //runtimeOnly files('libs/runtime/platform-3.5.2.jar')
     //runtimeOnly files('libs/runtime/vlcj-3.0.1.jar')
@@ -84,9 +84,4 @@ dependencies {
 //noinspection GroovyAssignabilityCheck
 jar {
     from configurations.runtimeOnly.collect { it.isDirectory() ? it : zipTree(it) }
-
-    manifest {
-        attributes('FMLCorePluginContainsFMLMod': 'true')
-        attributes('FMLCorePlugin': 'coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin')
-    }
 }
