@@ -30,7 +30,7 @@ public class GSCheckCommand extends CommandBase {
 	private String getCommandUsageText() {
 		return "/gscheck <player> [<player> ...]\n"
 				+ "Returns a listing of when each player captured shiny and "
-				+ "unknown egg group pixelmon.";
+				+ "undiscovered egg group pixelmon.";
 	}
 
 	@Override

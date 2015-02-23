@@ -51,6 +51,8 @@ public class ShinyNotifier// extends JavaPlugin
 	PreparedStatement playerStatement;
 	PreparedStatement captureStatement;
 	PreparedStatement gscheckStatement;
+	PreparedStatement gstopUndiscoveredStatement;
+	PreparedStatement gstopShiniesStatement;
     
 	@EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -97,13 +99,40 @@ public class ShinyNotifier// extends JavaPlugin
         
         String gscheckStatementText = "SELECT c.captureTimestamp, c.pokemon, c.type FROM " + 
         		DatabaseUtil.playerTable + " p LEFT JOIN " + DatabaseUtil.captureTable + " c " +
-        		//"ON p.id = c.playerUUID WHERE p.name = ? ORDER BY c.type ASC, c.captureTimestamp DESC";
         		"ON p.id = c.playerUUID WHERE p.name = ? ORDER BY c.captureTimestamp DESC";
         System.out.println("gscheckStatementText: " + gscheckStatementText);
         try {
         	gscheckStatement = con.prepareStatement(gscheckStatementText);
         } catch (SQLException e) {
         	System.err.println("Error preparing database statement for the gscheck command for ShinyNotifier.");
+        	e.printStackTrace();
+        	throw new RuntimeException(e);
+        }
+        
+        String gstopUndiscoveredText = "SELECT p.name, count(1) as numUndiscovered FROM " + 
+        		DatabaseUtil.playerTable + " p JOIN " + DatabaseUtil.captureTable + " c " +
+        		"ON p.id = c.playerUUID WHERE c.captureTimestamp >= "
+        		+ "DATEADD('DAY', -(?), CURRENT_DATE) AND c.type = 'UNDISCOVERED' "
+        		+ "GROUP BY p.name ORDER BY count(1) DESC LIMIT 10";
+        System.out.println("gscheckStatementText: " + gstopUndiscoveredText);
+        try {
+        	gstopUndiscoveredStatement = con.prepareStatement(gstopUndiscoveredText);
+        } catch (SQLException e) {
+        	System.err.println("Error preparing database statement for the gstop (undiscovered) command for ShinyNotifier.");
+        	e.printStackTrace();
+        	throw new RuntimeException(e);
+        }
+        
+        String gstopShiniesText = "SELECT p.name, count(1) as numShinies FROM " + 
+        		DatabaseUtil.playerTable + " p JOIN " + DatabaseUtil.captureTable + " c " +
+        		"ON p.id = c.playerUUID WHERE c.captureTimestamp >= "
+        		+ "DATEADD('DAY', -(?), CURRENT_DATE) AND c.type = 'SHINY' "
+        		+ "GROUP BY p.name ORDER BY count(1) DESC LIMIT 10";
+        System.out.println("gscheckStatementText: " + gstopShiniesText);
+        try {
+        	gstopShiniesStatement = con.prepareStatement(gstopShiniesText);
+        } catch (SQLException e) {
+        	System.err.println("Error preparing database statement for the gstop (shinies) command for ShinyNotifier.");
         	e.printStackTrace();
         	throw new RuntimeException(e);
         }
@@ -114,6 +143,7 @@ public class ShinyNotifier// extends JavaPlugin
     	ServerCommandManager commandMgr = (ServerCommandManager) server.getCommandManager();
     	
     	commandMgr.registerCommand(new GSCheckCommand());
+    	commandMgr.registerCommand(new GSTopCommand());
     }
    
 }
