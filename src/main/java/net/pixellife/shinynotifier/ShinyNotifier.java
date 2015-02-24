@@ -53,13 +53,13 @@ public class ShinyNotifier// extends JavaPlugin
 	PreparedStatement gscheckStatement;
 	PreparedStatement gstopUndiscoveredStatement;
 	PreparedStatement gstopShiniesStatement;
+	PreparedStatement gspurgeStatement;
     
 	@EventHandler
     public void preInit(FMLPreInitializationEvent event) {
 		this.config = new Configuration(event.getSuggestedConfigurationFile());
 		this.config.load();
 		modDirectory = new File(event.getModConfigurationDirectory().getParent());
-		System.out.println("modDirectory: " + modDirectory.getPath());
     }
     
     @EventHandler
@@ -68,7 +68,6 @@ public class ShinyNotifier// extends JavaPlugin
     	System.out.println("this.config: " + this.config.toString());
         Pixelmon.EVENT_BUS.register(new PixelmonCaptureHandler());
         Connection con = DatabaseUtil.getConnection();
-        System.out.println("con: " + con.toString());
         
         prepareDatabaseStatements(con);
         setupCommands();
@@ -77,7 +76,6 @@ public class ShinyNotifier// extends JavaPlugin
     private void prepareDatabaseStatements(Connection con) {
     	String playerStatementText = "MERGE INTO " + DatabaseUtil.playerTable + " KEY(id) "
         		+ "VALUES (?, ?)";
-        System.out.println("playerStatementText: " + playerStatementText);
         try {
         	playerStatement = con.prepareStatement(playerStatementText);
         } catch (SQLException e) {
@@ -88,7 +86,6 @@ public class ShinyNotifier// extends JavaPlugin
         
         String captureStatementText = "INSERT INTO " + DatabaseUtil.captureTable + "(captureTimestamp, playerUUID, pokemon, type) "
         		+ "VALUES (?, ?, ?, ?)";
-        System.out.println("captureStatementText: " + captureStatementText);
         try {
         	captureStatement = con.prepareStatement(captureStatementText);
         } catch (SQLException e) {
@@ -100,7 +97,6 @@ public class ShinyNotifier// extends JavaPlugin
         String gscheckStatementText = "SELECT c.captureTimestamp, c.pokemon, c.type FROM " + 
         		DatabaseUtil.playerTable + " p LEFT JOIN " + DatabaseUtil.captureTable + " c " +
         		"ON p.id = c.playerUUID WHERE p.name = ? ORDER BY c.captureTimestamp DESC";
-        System.out.println("gscheckStatementText: " + gscheckStatementText);
         try {
         	gscheckStatement = con.prepareStatement(gscheckStatementText);
         } catch (SQLException e) {
@@ -114,7 +110,6 @@ public class ShinyNotifier// extends JavaPlugin
         		"ON p.id = c.playerUUID WHERE c.captureTimestamp >= "
         		+ "DATEADD('DAY', -(?), CURRENT_DATE) AND c.type = 'UNDISCOVERED' "
         		+ "GROUP BY p.name ORDER BY count(1) DESC LIMIT 10";
-        System.out.println("gscheckStatementText: " + gstopUndiscoveredText);
         try {
         	gstopUndiscoveredStatement = con.prepareStatement(gstopUndiscoveredText);
         } catch (SQLException e) {
@@ -128,11 +123,21 @@ public class ShinyNotifier// extends JavaPlugin
         		"ON p.id = c.playerUUID WHERE c.captureTimestamp >= "
         		+ "DATEADD('DAY', -(?), CURRENT_DATE) AND c.type = 'SHINY' "
         		+ "GROUP BY p.name ORDER BY count(1) DESC LIMIT 10";
-        System.out.println("gscheckStatementText: " + gstopShiniesText);
         try {
         	gstopShiniesStatement = con.prepareStatement(gstopShiniesText);
         } catch (SQLException e) {
         	System.err.println("Error preparing database statement for the gstop (shinies) command for ShinyNotifier.");
+        	e.printStackTrace();
+        	throw new RuntimeException(e);
+        }
+        
+        String gspurgeText = "DELETE FROM " + DatabaseUtil.captureTable + " c "
+        		+ " WHERE c.playerUUID in (SELECT id FROM " + DatabaseUtil.playerTable +
+        		" p WHERE p.name = ?)";
+        try {
+        	gspurgeStatement = con.prepareStatement(gspurgeText);
+        } catch (SQLException e) {
+        	System.err.println("Error preparing database statement for the gspurge command for ShinyNotifier.");
         	e.printStackTrace();
         	throw new RuntimeException(e);
         }
@@ -144,6 +149,7 @@ public class ShinyNotifier// extends JavaPlugin
     	
     	commandMgr.registerCommand(new GSCheckCommand());
     	commandMgr.registerCommand(new GSTopCommand());
+    	commandMgr.registerCommand(new GSPurgeCommand());
     }
    
 }

@@ -37,7 +37,7 @@ public class GSTopCommand extends CommandBase {
 			EntityPlayer player = (EntityPlayer) commandSender;
 			ChatComponentText playerMessage;
 			
-			if ( PermsHelper.hasPerm(player.getDisplayName(), "ShinyNotifier.gscheck") ) {
+			if ( PermsHelper.hasPerm(player.getDisplayName(), "ShinyNotifier.gstop") ) {
 				String[] messageLines = getTopCatchers(arguments).split("\n");
 				for ( String messageText : messageLines ) { 
 					playerMessage = new ChatComponentText(messageText);
