@@ -50,16 +50,23 @@ public final class DatabaseUtil {
 				System.out.println("Creating database directory");
 				shinyDatabaseDir.mkdir();
 			}
+			
 			File databaseLockFile = new File(shinyDatabasePath + "ShinyNotifier.lock.db");
-			if (databaseLockFile.exists())
+			if (databaseLockFile.exists()) {
+				System.err.println("Database lock file exists when unexpected. "
+						+ "ShinyNotifier opens its database on server start and maintains"
+						+ " the connection while the server is alive. If the lock file "
+						+ "exists, it is likely that things did not shut down gracefully. "
+						+ "ShinyNotifier will now delete this file so the database can"
+						+ " be accessed peoperly.");
 				databaseLockFile.delete();
-			File databaseFile = new File(shinyDatabasePath + "ShinyNotifier.h2.db");
-			if (databaseFile.exists()) {
-				databaseFile.delete();
 			}
 			
 			if (!(new File(shinyDatabasePath).exists())
 					|| !(new File(shinyDatabasePath, "ShinyNotifier.h2.db").exists())) {
+				System.out.println("Database file " + shinyDatabasePath + "ShinyNotifier.h2.db"
+						+ " not found. Creating new database. If this is a mistake, please "
+						+ "copy the existing database file to this location.");
 				copyDatabaseFromJar();
 			}
 			if (!(new File(pixelmonDatabasePath + "h2-1.3.173.jar").exists()))
