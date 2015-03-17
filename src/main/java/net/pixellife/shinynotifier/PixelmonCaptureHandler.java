@@ -19,6 +19,7 @@ import net.minecraft.util.ChatComponentText;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import scala.actors.threadpool.Arrays;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class PixelmonCaptureHandler {
@@ -34,8 +35,8 @@ public class PixelmonCaptureHandler {
     		type = ShinyNotifier.SHINY;
     		//System.out.println("Captured Shiny!");
     		
-    	} else if (event.capturedPixelmon.group == EnumEggGroup.Undiscovered ) {
-    		type = ShinyNotifier.UNDISCOVERED;
+    	} else if ( ShinyNotifier.instance.watchedPixelmon.contains(pokeName) ) {
+    		type = ShinyNotifier.WATCHED;
     		//System.out.println("Captured Undiscovered!");
     		
     	} else {
@@ -53,7 +54,7 @@ public class PixelmonCaptureHandler {
 		if ( type == ShinyNotifier.SHINY ) {
 			notificationText = new ChatComponentText(playerName + " just caught a shiny " + pokeName + "!");
 			System.out.println(playerName + " just caught a shiny " + pokeName + "!");
-		} else if ( type == ShinyNotifier.UNDISCOVERED ) {
+		} else if ( type == ShinyNotifier.WATCHED ) {
 			notificationText = new ChatComponentText(playerName + " just caught a " + pokeName + "!");
 			System.out.println(playerName + " just caught a " + pokeName + "!");
 		} else {
@@ -65,7 +66,6 @@ public class PixelmonCaptureHandler {
 		for ( EntityPlayerMP onlinePlayer : playerList ) {
 			if ( PermsHelper.hasPerm(onlinePlayer.getDisplayName(), "ShinyNotifier.receive") ) {
 				onlinePlayer.addChatMessage(notificationText);
-				// TODO: test
 			}
 		}
 	}

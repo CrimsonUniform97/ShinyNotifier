@@ -62,7 +62,7 @@ public class GSCheckCommand extends CommandBase {
 			
 			String outputText = "";
 			int shinyCount = 0;
-			int unknownCount = 0;
+			int watchedCount = 0;
 			
 			for ( String playerName : arguments ) {
 				
@@ -95,7 +95,7 @@ public class GSCheckCommand extends CommandBase {
 				}
 				
 				shinyCount = 0;
-				unknownCount = 0;
+				watchedCount = 0;
 				
 				try {
 					while ( gscheckResults.next() ) {
@@ -113,7 +113,7 @@ public class GSCheckCommand extends CommandBase {
 							shinyCount++;
 						} else {
 							outputText += captureTimeText + " " + pokemon + "\n";
-							unknownCount++;
+							watchedCount++;
 						}
 					}
 				} catch (SQLException e) {
@@ -125,7 +125,7 @@ public class GSCheckCommand extends CommandBase {
 				}
 				
 				outputText += "\nShinies: " + shinyCount +
-						" -- Unknowns: " + unknownCount + "\n";
+						" -- Watched: " + watchedCount + "\n";
 			}
 			
 			return outputText;

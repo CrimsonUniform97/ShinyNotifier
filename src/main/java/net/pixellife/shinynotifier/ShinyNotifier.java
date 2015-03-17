@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,7 +18,9 @@ import net.minecraft.command.ServerCommandManager;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -38,7 +42,7 @@ public class ShinyNotifier// extends JavaPlugin
     public static final String VERSION = "0.1";
     
     protected final static String SHINY = "SHINY";
-    protected final static String UNDISCOVERED = "UNDISCOVERED";
+    protected final static String WATCHED = "WATCHED";
     
     //@Mod.Instance(name = "shinynotifier", dependencies = "after:pixelmon")
     @Mod.Instance("shinynotifier")
@@ -46,19 +50,26 @@ public class ShinyNotifier// extends JavaPlugin
 
 	public static File modDirectory;
 	
+	public ArrayList<String> watchedPixelmon;
+	
 	Configuration config;
 	
 	PreparedStatement playerStatement;
 	PreparedStatement captureStatement;
 	PreparedStatement gscheckStatement;
-	PreparedStatement gstopUndiscoveredStatement;
+	PreparedStatement gstopWatchedStatement;
 	PreparedStatement gstopShiniesStatement;
 	PreparedStatement gspurgeStatement;
     
 	@EventHandler
     public void preInit(FMLPreInitializationEvent event) {
 		this.config = new Configuration(event.getSuggestedConfigurationFile());
+		System.out.println("Config file: " + event.getSuggestedConfigurationFile().toString());
 		this.config.load();
+		Property watchedPixelmonProperty = this.config.get(Configuration.CATEGORY_GENERAL, "watchedPixelmon", "Articuno,Zapdos,Moltres,Mew,Mewtwo,Rayquaza,Groudon,Kyogre,Entei,Raikou,Suicune,Celebi,Lugia");
+		watchedPixelmon = new ArrayList<String>(Arrays.asList(watchedPixelmonProperty.getString().split(",")));
+    	this.config.save();
+    	
 		modDirectory = new File(event.getModConfigurationDirectory().getParent());
     }
     
@@ -71,6 +82,8 @@ public class ShinyNotifier// extends JavaPlugin
         
         prepareDatabaseStatements(con);
         setupCommands();
+        
+        System.out.println("watchedPixelmon: " + watchedPixelmon.toString());
     }
     
     private void prepareDatabaseStatements(Connection con) {
@@ -105,15 +118,15 @@ public class ShinyNotifier// extends JavaPlugin
         	throw new RuntimeException(e);
         }
         
-        String gstopUndiscoveredText = "SELECT p.name, count(1) as numUndiscovered FROM " + 
+        String gstopWatchedText = "SELECT p.name, count(1) as numWatched FROM " + 
         		DatabaseUtil.playerTable + " p JOIN " + DatabaseUtil.captureTable + " c " +
         		"ON p.id = c.playerUUID WHERE c.captureTimestamp >= "
-        		+ "DATEADD('DAY', -(?), CURRENT_DATE) AND c.type = 'UNDISCOVERED' "
+        		+ "DATEADD('DAY', -(?), CURRENT_DATE) AND c.type = '" + ShinyNotifier.WATCHED + "' "
         		+ "GROUP BY p.name ORDER BY count(1) DESC LIMIT 10";
         try {
-        	gstopUndiscoveredStatement = con.prepareStatement(gstopUndiscoveredText);
+        	gstopWatchedStatement = con.prepareStatement(gstopWatchedText);
         } catch (SQLException e) {
-        	System.err.println("Error preparing database statement for the gstop (undiscovered) command for ShinyNotifier.");
+        	System.err.println("Error preparing database statement for the gstop (watched) command for ShinyNotifier.");
         	e.printStackTrace();
         	throw new RuntimeException(e);
         }

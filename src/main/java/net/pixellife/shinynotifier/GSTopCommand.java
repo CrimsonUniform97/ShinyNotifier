@@ -68,13 +68,13 @@ public class GSTopCommand extends CommandBase {
 			}
 			
 			String outputText = "GSTop\nDays back to look: " + arguments[0] + " days"
-					+ "\n\nUnknowns:\n";
+					+ "\n\nWatched:\n";
 			
-			PreparedStatement gstopUndiscoveredStatement = ShinyNotifier.instance.gstopUndiscoveredStatement;
+			PreparedStatement gstopWatchedStatement = ShinyNotifier.instance.gstopWatchedStatement;
 			ResultSet gstopResults;
 			
 			try {
-				gstopUndiscoveredStatement.setInt(1, daysBackToLook);
+				gstopWatchedStatement.setInt(1, daysBackToLook);
 			} catch (SQLException e1) {
 				System.err.println("Error setting daysBackToLook when attempting to call"
 						+ " prepared database statement for the /gstop (undiscovered) command.");
@@ -84,7 +84,7 @@ public class GSTopCommand extends CommandBase {
 			}
 			
 			try {
-				gstopResults = gstopUndiscoveredStatement.executeQuery();
+				gstopResults = gstopWatchedStatement.executeQuery();
 			} catch (SQLException e) {
 				System.err.println("Error executing the prepared database statement"
 						+ " for the /gstop (undiscovered) command.");
@@ -96,9 +96,9 @@ public class GSTopCommand extends CommandBase {
 			try {
 				while ( gstopResults.next() ) {
 					String playerName = gstopResults.getString(1);
-					int numUndiscovered = gstopResults.getInt(2);
+					int numWatched = gstopResults.getInt(2);
 					
-					outputText += "  " + playerName + ": " + numUndiscovered + "\n";
+					outputText += "  " + playerName + ": " + numWatched + "\n";
 				}
 			} catch (SQLException e) {
 				System.err.println("Error retrieving results from database for "
