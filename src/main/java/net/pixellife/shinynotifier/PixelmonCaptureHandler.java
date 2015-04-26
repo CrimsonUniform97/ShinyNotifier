@@ -51,10 +51,10 @@ public class PixelmonCaptureHandler {
 		
 		ChatComponentText notificationText;
 		
-		if ( type == ShinyNotifier.SHINY ) {
+		if ( ShinyNotifier.SHINY.equals(type) ) {
 			notificationText = new ChatComponentText(playerName + " just caught a shiny " + pokeName + "!");
 			System.out.println(playerName + " just caught a shiny " + pokeName + "!");
-		} else if ( type == ShinyNotifier.WATCHED ) {
+		} else if ( ShinyNotifier.WATCHED.equals(type) ) {
 			notificationText = new ChatComponentText(playerName + " just caught a " + pokeName + "!");
 			System.out.println(playerName + " just caught a " + pokeName + "!");
 		} else {

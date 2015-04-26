@@ -15,7 +15,7 @@ import net.minecraft.util.ChatComponentText;
 
 public class GSCheckCommand extends CommandBase {
 	
-	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	@Override
 	public String getCommandName() {
@@ -107,13 +107,20 @@ public class GSCheckCommand extends CommandBase {
 						
 						String pokemon = gscheckResults.getString(2);
 						String type = gscheckResults.getString(3);
+						System.out.println("gscheck pokemon='" + pokemon + "' type='" + type + "'");
+						System.out.println("sanity check: shiny='" + ShinyNotifier.SHINY +
+								"' watched='" + ShinyNotifier.WATCHED + "'");
 						
-						if ( type == ShinyNotifier.SHINY ) {
+						if ( ShinyNotifier.SHINY.equals(type) ) {
+							System.out.println("Recognized type='" + type + "' as SHINY");
 							outputText += captureTimeText + " Shiny " + pokemon + "\n";
 							shinyCount++;
-						} else {
+						} else if ( ShinyNotifier.WATCHED.equals(type) ) {
+							System.out.println("Recognized type='" + type + "' as WATCHED");
 							outputText += captureTimeText + " " + pokemon + "\n";
 							watchedCount++;
+						} else {
+							System.err.println("Didn't recognize the capture type from the database when running through gscheck. Something is amiss.");
 						}
 					}
 				} catch (SQLException e) {
