@@ -28,7 +28,7 @@ public class GSTopCommand extends CommandBase {
 	private String getCommandUsageText() {
 		return "/gstop <daysBackToLook>\n"
 				+ "Returns a listing of the players that have caught the most "
-				+ "shiny and undiscovered pokemon within the given timeframe.";
+				+ "shiny and watched pokemon within the given timeframe.";
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class GSTopCommand extends CommandBase {
 				gstopWatchedStatement.setInt(1, daysBackToLook);
 			} catch (SQLException e1) {
 				System.err.println("Error setting daysBackToLook when attempting to call"
-						+ " prepared database statement for the /gstop (undiscovered) command.");
+						+ " prepared database statement for the /gstop (watched) command.");
 				e1.printStackTrace();
 				//outputText += "Error getting data.";
 				return "Error getting data.";
@@ -87,7 +87,7 @@ public class GSTopCommand extends CommandBase {
 				gstopResults = gstopWatchedStatement.executeQuery();
 			} catch (SQLException e) {
 				System.err.println("Error executing the prepared database statement"
-						+ " for the /gstop (undiscovered) command.");
+						+ " for the /gstop (watched) command.");
 				e.printStackTrace();
 				//outputText += "Error getting data.";
 				return "Error getting data.";
@@ -102,7 +102,7 @@ public class GSTopCommand extends CommandBase {
 				}
 			} catch (SQLException e) {
 				System.err.println("Error retrieving results from database for "
-						+ "/gstop (undiscovered) command.");
+						+ "/gstop (watched) command.");
 				e.printStackTrace();
 				//outputText += "Error getting data.";
 				return "Error getting data.";
@@ -115,7 +115,7 @@ public class GSTopCommand extends CommandBase {
 				gstopResults.close();
 			} catch (SQLException e) {
 				System.err.println("Error closing result set for"
-						+ " prepared database statement for the /gstop (undiscovered) command.");
+						+ " prepared database statement for the /gstop (watched) command.");
 				e.printStackTrace();
 				//outputText += "Error getting data.";
 				return "Error getting data.";
