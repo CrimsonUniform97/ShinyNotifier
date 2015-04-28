@@ -52,7 +52,7 @@ public class ShinyNotifier// extends JavaPlugin
 	
 	public ArrayList<String> watchedPixelmon;
 	
-	Configuration config;
+	public Configuration config;
 	
 	PreparedStatement playerStatement;
 	PreparedStatement captureStatement;
@@ -163,6 +163,13 @@ public class ShinyNotifier// extends JavaPlugin
     	commandMgr.registerCommand(new GSCheckCommand());
     	commandMgr.registerCommand(new GSTopCommand());
     	commandMgr.registerCommand(new GSPurgeCommand());
+    	commandMgr.registerCommand(new GSReloadCommand());
+    }
+    
+    public void reloadConfigurations() {
+    	config.load();
+		Property watchedPixelmonProperty = this.config.get(Configuration.CATEGORY_GENERAL, "watchedPixelmon", "Articuno,Zapdos,Moltres,Mew,Mewtwo,Rayquaza,Groudon,Kyogre,Entei,Raikou,Suicune,Celebi,Lugia");
+		watchedPixelmon = new ArrayList<String>(Arrays.asList(watchedPixelmonProperty.getString().split(",")));
     }
    
 }

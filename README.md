@@ -15,23 +15,29 @@ Commands
 - **gscheck**
         * **description**: Check the captured shinies/watched of a player
         * **usage**: /<command> [player]
-        * **permission required**: ShinyNotifier.gscheck 
+        * **permission required**: net.pixellife.shinynotifier.GSCheckCommand
 - **gstop**
         * **description**: Check the top N players in M days by how many shinies/watched they've captured
         * **usage**: /<command> \[top\] \[days\]
-        * **permission required**: ShinyNotifier.gstop
+        * **permission required**: net.pixellife.shinynotifier.GSTopCommand
 - **gspurge**
         * **description**: Purge the record of a given player. This removes all data about shinies/watched Pixelmon the player has captured.
         * **usage**: /<command> [player]
-        * **permission required**: ShinyNotifier.gstop
+        * **permission required**: net.pixellife.shinynotifier.GSPurgeCommand
+- **gsreload**
+        * **description**: Reload configuration file for ShinyNotifier without restarting the server. Useful when you need to add a new watched Pixelmon.
+        * **usage**: /<command>
+        * **permission required**: net.pixellife.shinynotifier.GSReloadCommand
 
 Permissions
 -------------
 - ShinyNotifier.receive:
         * Receive notifications from the mod on shiny/watched capture
-- ShinyNotifier.gscheck:
+- net.pixellife.shinynotifier.GSCheckCommand:
         * Allows you to check the captured shinies/watched of a player - permits the /gscheck command
-- ShinyNotifier.gstop:
+- net.pixellife.shinynotifier.GSTopCommand:
         * Allows you to check the top N players in M days by how many shinies/watched they've captured - permits the /gstop command
-- ShinyNotifier.gspurge:
+- net.pixellife.shinynotifier.GSPurgeCommand:
         * Allows you to purge the record of a given player - permits the /gspurge command
+- net.pixellife.shinynotifier.GSReloadCommand:
+        * Allows you to reload ShinyNotifier's configuration file - permits the /gsreload command
